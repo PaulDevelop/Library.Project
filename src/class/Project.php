@@ -46,26 +46,6 @@ class Project extends Base implements IProjectNode
     public function getNode($key = '')
     {
         // TODO: Implement getNode() method.
-        /*
-        $chunks = preg_split('/\./', $key, 0, PREG_SPLIT_NO_EMPTY);
-        var_dump($chunks);
-
-        $result = null;
-
-        switch ( count($chunks) ) {
-            case 1:
-                if ( $chunks[0] == 'model') {
-                    $result = $this->Model;
-                }
-        }
-
-        if ( count($chunks) > 0 ) {
-
-        }
-
-        die;
-        */
-
     }
 
     /**

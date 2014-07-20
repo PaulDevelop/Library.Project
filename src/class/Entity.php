@@ -12,8 +12,8 @@ use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
  * Class Entity
  * @package Com\PaulDevelop\Library\Project
  *
- * @property string                                                         $Namespace
- * @property string                                                         $Name
+ * @property string              $Namespace
+ * @property string              $Name
  * @property AttributeCollection $Attributes
  * @property PropertyCollection  $Properties
  */

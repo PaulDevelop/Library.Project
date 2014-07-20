@@ -37,47 +37,6 @@ class Model extends Base implements IProjectNode
     }
     #endregion
 
-    /*
-    public function getNode($path)
-    {
-        // init
-        $chunks = $this->splitPath($path);
-
-        // action
-        $curObj = $this;
-        foreach ($chunks as $chunk) {
-            // check, if attributes exist
-            $regs = array();
-            preg_match('/^([a-z]+)(?:\[(.*)\])?$/i', $chunk, $regs);
-
-            // if there are attributes, store them in array
-            $chunkAttributes = array();
-            if (sizeof($regs) > 2) {
-                // get chunk name
-                $chunk = $regs[1];
-
-                // get attributes
-                $tmpAttributes = preg_split('/\,/', $regs[2]);
-                for ($i = 0; $i < sizeof($tmpAttributes); $i++) {
-                    list($key, $value) = preg_split('/\=/', $tmpAttributes[$i]); // split into key = value
-                    $key = substr($key, 1, strlen($key) - 1); // remove @
-                    $value = trim($value, '\''); // remove ''
-                    $chunkAttributes[$key] = $value; // add to attributes list
-                }
-            }
-
-            if (($curObj = $curObj->getChildNode($chunk, $chunkAttributes)) != null) {
-                // zuweisung schon oben in if-block schon erfolgt
-            } else {
-                throw new ChildDoesNotExistException('Child node "'.$chunk.'" '.' ("'.$path.'") does not exist.');
-            }
-        }
-
-        // return
-        return $curObj;
-    }
-    */
-
     #region methods
     /**
      * @return IProjectNode

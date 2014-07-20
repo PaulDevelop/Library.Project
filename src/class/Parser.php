@@ -10,11 +10,7 @@ class Parser
 {
     public static function parse($projectFileName = '')
     {
-        //$result = new Project();
-
-        //$entities = new \Com\PaulDevelop\Library\Modeling\Entities\EntityCollection();
         $projectAttributeCollection = new AttributeCollection();
-
         $project = simplexml_load_file($projectFileName);
 
         // project attributes
@@ -22,7 +18,6 @@ class Parser
         foreach ($projectNamespaces as $namespaceName => $namespaceUri) {
             $projectAttributes = $project->attributes($namespaceName, true);
             foreach ($projectAttributes as $key => $value) {
-                //echo $namespaceName.':'.$key.' = '.(string)$value.PHP_EOL;
                 $projectAttributeCollection->add(
                     new Attribute($namespaceName, $key, (string)$value),
                     $namespaceName.':'.$key
@@ -38,7 +33,6 @@ class Parser
         foreach ($modelNamespaces as $namespaceName => $namespaceUri) {
             $modelAttributes = $model->attributes($namespaceName, true);
             foreach ($modelAttributes as $key => $value) {
-                //echo $namespaceName.':'.$key.' = '.(string)$value.PHP_EOL;
                 $modelAttributeCollection->add(
                     new Attribute($namespaceName, $key, (string)$value),
                     $namespaceName.':'.$key
@@ -55,7 +49,6 @@ class Parser
             foreach ($entityNamespaces as $namespaceName => $namespaceUri) {
                 $entityAttributes = $entity->attributes($namespaceName, true);
                 foreach ($entityAttributes as $key => $value) {
-                    //echo $namespaceName.':'.$key.' = '.(string)$value.PHP_EOL;
                     $entityAttributeCollection->add(
                         new Attribute($namespaceName, $key, (string)$value),
                         $namespaceName.':'.$key
@@ -71,8 +64,6 @@ class Parser
                 foreach ($propertyNamespaces as $namespaceName => $namespaceUri) {
                     $propertyAttributes = $property->attributes($namespaceName, true);
                     foreach ($propertyAttributes as $key => $value) {
-                        //echo $namespaceName.':'.$key.' = '.(string)$value.PHP_EOL;
-                        //die;
                         $propertyAttributeCollection->add(
                             new Attribute($namespaceName, $key, (string)$value),
                             $namespaceName.':'.$key
@@ -80,9 +71,6 @@ class Parser
                     }
                 }
 
-                //echo 'add'.PHP_EOL;
-                //var_dump($projectAttributeCollection['property:name']->Value);
-                //die;
                 $entityPropertyCollection->add(
                     new Property(
                         $propertyAttributeCollection['property:name']->Value,
@@ -103,50 +91,14 @@ class Parser
                 .'.'
                 .$entityAttributeCollection['entity:name']->Value
             );
-            /*
-            // entity properties
-            foreach ($entity->property as $property) {
-                $p = new Property();
-
-                $propertyNamespaces = $property->getNamespaces(true);
-                foreach ($propertyNamespaces as $namespaceName => $namespaceUri) {
-                    $propertyAttributes = $property->attributes($namespaceName, true);
-                    foreach ($propertyAttributes as $key => $value) {
-                        //echo '  '.$namespaceName.':'.$key.' = '.(string)$value.PHP_EOL;
-                        $p->getAttributes()->add(
-                            new Attribute($namespaceName, $key, (string)$value), $namespaceName.':'.$key
-                        );
-                    }
-                }
-
-                $p->Name = $p->Attributes['property:name']->Value;
-                $model->Properties->add($p, $p->Name);
-            }
-            */
-            //$e->Namespace = $e->Attributes['entity:namespace']->Value;
-            //$e->Name = $e->Attributes['entity:name']->Value;
-            //$entities->add($e, $e->Namespace.'.'.$e->Name);
-            //var_dump($e);
-            //die;
         }
 
-        //$model = new Model(self::processEntityInheritation($modelEntityCollection), $modelAttributeCollection);
-        //$project = new Project($model, $projectAttributeCollection);
         $project = new Project(
             new Model(self::processEntityInheritation($modelEntityCollection), $modelAttributeCollection),
             $projectAttributeCollection
         );
 
         return $project;
-        //var_dump($project);
-        //die;
-        //var_dump($entities);
-        //die;
-        //foreach ($entities as $key => $entity) {
-        //    echo $key.PHP_EOL;
-        //}
-        //$entities2 = self::processEntityInheritation($entities);
-        //return self::processEntityInheritation($project->Model->Entities);
     }
 
     /**
@@ -179,13 +131,6 @@ class Parser
                 // get inherited entity
                 $inheritedEntity = $entities[$entity->Attributes['entity:extends']->Value];
                 /** @var \Com\PaulDevelop\Library\Modeling\Entities\IEntity $inheritedEntity */
-
-                //foreach ($entities as $key => $entity2) {
-                //    echo $key.' => '.$entity2->Namespace.'.'.$entity2->Name.PHP_EOL;
-                //}
-
-                //var_dump($inheritedEntity);
-                //die;
 
                 // mark current and inherited entity as used
                 if (!array_key_exists($inheritedEntity->Namespace.'.'.$inheritedEntity->Name, $entitiesUsed)) {
@@ -239,22 +184,7 @@ class Parser
                 $newEntity->Name = $entity->Name;
 
                 $result->add($newEntity, $newEntity->Namespace.'.'.$newEntity->Name);
-                //echo '    add1 '.$newEntity->Namespace.'.'.$newEntity->Name.PHP_EOL;
             }
-
-            //die;
-
-            //foreach ($entity->Properties as $property) {
-            //    echo '  '.$property->Name.PHP_EOL;
-            //    /** @var \Com\PaulDevelop\Library\Modeling\Entities\IProperty $property */
-            //    foreach ($property->Attributes as $attribute) {
-            //        echo '    '.$attribute->Key.PHP_EOL;
-            //    }
-            //    if ($property->Attributes['extends'] != null) {
-            //        var_dump($property->Attributes['extends']);
-            //    }
-            //}
-
         }
 
         // iterate one more time, this time skip used entities
@@ -264,7 +194,6 @@ class Parser
             // check, if not used
             if (!array_key_exists($entity->Namespace.'.'.$entity->Name, $entitiesUsed)) {
                 $result->add($entity, $entity->Namespace.':'.$entity->Name);
-                //echo '    add2 '.$entity->Namespace.'.'.$entity->Name.PHP_EOL;
             }
         }
 
