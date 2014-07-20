@@ -7,7 +7,7 @@ use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 /**
  * Interface IProjectNode
  * @package Com\PaulDevelop\Library\Project
- * @property \Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection $Attributes
+ * @property AttributeCollection $Attributes
  */
 interface IProjectNode
 {
