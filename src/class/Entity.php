@@ -4,6 +4,7 @@ namespace Com\PaulDevelop\Library\Project;
 
 use Com\PaulDevelop\Library\Common\Base;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
+use Com\PaulDevelop\Library\Modeling\Entities\EntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\IEntity;
 use Com\PaulDevelop\Library\Modeling\Entities\IProperty;
 use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
@@ -16,6 +17,8 @@ use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
  * @property string              $Name
  * @property AttributeCollection $Attributes
  * @property PropertyCollection  $Properties
+ * @property string              $ReferencingPropertyName
+ * @property EntityCollection    $ParentEntities
  */
 class Entity extends Base implements IEntity, IProjectNode
 {
@@ -39,6 +42,16 @@ class Entity extends Base implements IEntity, IProjectNode
      * @var PropertyCollection
      */
     private $properties;
+
+    /**
+     * @var string
+     */
+    private $referencingPropertyName;
+
+    /**
+     * @var EntityCollection
+     */
+    private $parentEntities;
     #endregion
 
     #region constructor
@@ -47,19 +60,23 @@ class Entity extends Base implements IEntity, IProjectNode
      * @param string              $name
      * @param AttributeCollection $attributes
      * @param PropertyCollection  $properties
+     * @param string              $referencingPropertyName
+     * @param EntityCollection  $parentEntities
      */
     public function __construct(
         $namespace = '',
         $name = '',
         AttributeCollection $attributes = null,
-        PropertyCollection $properties = null
+        PropertyCollection $properties = null,
+        $referencingPropertyName = '',
+        EntityCollection $parentEntities = null
     ) {
         $this->namespace = $namespace;
         $this->name = $name;
-        $this->attributes = $attributes != null ? $attributes
-            : new AttributeCollection();
-        $this->properties = $properties != null ? $properties
-            : new PropertyCollection();
+        $this->attributes = $attributes != null ? $attributes : new AttributeCollection();
+        $this->properties = $properties != null ? $properties : new PropertyCollection();
+        $this->referencingPropertyName = $referencingPropertyName;
+        $this->parentEntities = $parentEntities != null ? $parentEntities : new EntityCollection();
     }
     #endregion
 
@@ -160,6 +177,34 @@ class Entity extends Base implements IEntity, IProjectNode
     public function getProperties()
     {
         return $this->properties;
+    }
+
+    /**
+     * Referencing property name
+     *
+     * @return string
+     */
+    public function getReferencingPropertyName()
+    {
+        return $this->referencingPropertyName;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setReferencingPropertyName($value = '')
+    {
+        $this->referencingPropertyName = $value;
+    }
+
+    /**
+     * Parent entities.
+     *
+     * @return EntityCollection
+     */
+    public function getParentEntities()
+    {
+        return $this->parentEntities;
     }
     #endregion
 }
