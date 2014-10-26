@@ -183,7 +183,7 @@ class Parser
                 $newEntity->Namespace = $entity->Namespace;
                 $newEntity->Name = $entity->Name;
 
-                $result->add($newEntity, $newEntity->Namespace.'.'.$newEntity->Name);
+                $result->add($newEntity, $newEntity->Namespace.':'.$newEntity->Name);
             }
         }
 
