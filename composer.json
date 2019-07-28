@@ -18,12 +18,7 @@
     },
     "require": {
         "pauldevelop/library-common": "*@dev",
-        "pauldevelop/library-modeling-entities": "*@dev"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "3.7.*",
-        "phpdocumentor/phpdocumentor": "2.5.*@dev",
-        "squizlabs/php_codesniffer": "1.*"
+        "pauldevelop/library-modeling-entities": "dev-feature/generic-entity"
     },
     "autoload": {
         "psr-4": {
