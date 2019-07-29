@@ -40,7 +40,7 @@ class GenericParser
 
         $genericEntity = null;
         try {
-            $genericEntity = self::parseGenericEntity($project);
+            $genericEntity = self::parseGenericEntity($project, null);
         } catch (ArgumentException $e) {
         } catch (TypeCheckException $e) {
         } catch (Exception $e) {
