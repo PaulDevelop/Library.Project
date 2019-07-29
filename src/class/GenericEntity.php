@@ -6,6 +6,7 @@ use Com\PaulDevelop\Library\Common\Base;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\GenericEntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\IGenericEntity;
+use Exception;
 
 /**
  * Class GenericEntity
@@ -16,40 +17,52 @@ use Com\PaulDevelop\Library\Modeling\Entities\IGenericEntity;
  * @property string $Type
  * @property AttributeCollection $Attributes
  * @property GenericEntityCollection $ChildrenEntities
- * @property GenericEntityCollection $ParentEntities
+ * @property GenericEntity $ParentGenericEntity
  */
+//* @property string              $ReferencingPropertyName
+//* @property GenericEntityCollection $ParentEntities
 class GenericEntity extends Base implements IGenericEntity, IProjectNode
 {
     #region member
     /**
      * @var string
      */
-    private $namespace;
+    private string $namespace;
 
     /**
      * @var string
      */
-    private $name;
+    private string $name;
 
     /**
      * @var string
      */
-    private $type;
+    private string $type;
 
     /**
      * @var AttributeCollection
      */
-    private $attributes;
+    private AttributeCollection $attributes;
+
+//    /**
+//     * @var string
+//     */
+//    private $referencingPropertyName;
+
+//    /**
+//     * @var GenericEntityCollection
+//     */
+//    private $referencedParentEntities;
+
+    /**
+     * @var GenericEntity
+     */
+    private GenericEntity $parentGenericEntity;
 
     /**
      * @var GenericEntityCollection
      */
-    private $parentEntities;
-
-    /**
-     * @var GenericEntityCollection
-     */
-    private $childrenEntities;
+    private GenericEntityCollection $childrenEntities;
     #endregion
 
     #region constructor
@@ -59,16 +72,20 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
      * @param string $type
      * @param AttributeCollection $attributes
      * @param GenericEntityCollection $childrenEntities
-     * @param GenericEntityCollection $parentEntities
-     * @throws \Exception
+     * @param GenericEntity $parentGenericEntity
+     * @throws Exception
      */
+//* @param string              $referencingPropertyName
+//* @param GenericEntityCollection $parentEntities
     public function __construct(
         $namespace = '',
         $name = '',
         $type = '',
         AttributeCollection $attributes = null,
         GenericEntityCollection $childrenEntities = null,
-        GenericEntityCollection $parentEntities = null
+//        $referencingPropertyName = '',
+//        GenericEntityCollection $parentEntities = null
+        GenericEntity $parentGenericEntity = null
     )
     {
         $this->namespace = $namespace;
@@ -76,7 +93,9 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
         $this->type = $type;
         $this->attributes = $attributes != null ? $attributes : new AttributeCollection();
         $this->childrenEntities = $childrenEntities != null ? $childrenEntities : new GenericEntityCollection();
-        $this->parentEntities = $parentEntities != null ? $parentEntities : new GenericEntityCollection();
+//        $this->referencingPropertyName = $referencingPropertyName;
+//        $this->parentEntities = $parentEntities != null ? $parentEntities : new GenericEntityCollection();
+        $this->parentGenericEntity = $parentGenericEntity;
     }
     #endregion
 
@@ -173,14 +192,43 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
 //        return $this->properties;
 //    }
 
+//    /**
+//     * Referencing property name
+//     *
+//     * @return string
+//     */
+//    public function getReferencingPropertyName()
+//    {
+//        return $this->referencingPropertyName;
+//    }
+//
+//    /**
+//     * @param string $value
+//     */
+//    public function setReferencingPropertyName($value = '')
+//    {
+//        $this->referencingPropertyName = $value;
+//    }
+
+//    /**
+//     * Parent entities.
+//     *
+//     * @return GenericEntityCollection
+//     */
+//    public function getParentEntities()
+//    {
+//        return $this->parentEntities;
+//    }
+//    #endregion
+
     /**
-     * Parent entities.
+     * Parent generic entity.
      *
-     * @return GenericEntityCollection
+     * @return GenericEntity
      */
-    public function getParentEntities()
+    public function getParentGenericEntity()
     {
-        return $this->parentEntities;
+        return $this->getParentGenericEntity();
     }
     #endregion
 

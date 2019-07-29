@@ -5,12 +5,12 @@ namespace Com\PaulDevelop\Library\Project;
 use Com\PaulDevelop\Library\Common\ArgumentException;
 use Com\PaulDevelop\Library\Common\TypeCheckException;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
-use Com\PaulDevelop\Library\Modeling\Entities\EntityCollection;
+//use Com\PaulDevelop\Library\Modeling\Entities\EntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\GenericEntityCollection;
-use Com\PaulDevelop\Library\Modeling\Entities\IAttribute;
-use Com\PaulDevelop\Library\Modeling\Entities\IEntity;
-use Com\PaulDevelop\Library\Modeling\Entities\IProperty;
-use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
+//use Com\PaulDevelop\Library\Modeling\Entities\IAttribute;
+//use Com\PaulDevelop\Library\Modeling\Entities\IEntity;
+//use Com\PaulDevelop\Library\Modeling\Entities\IProperty;
+//use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
 use Exception;
 use SimpleXMLElement;
 
@@ -27,14 +27,24 @@ class GenericParser
             $projectAttributes = $project->attributes($namespaceName, true);
             foreach ($projectAttributes as $key => $value) {
                 echo $namespaceName . ' - ' . $key . ' - ' . $value . PHP_EOL;
-                $projectAttributeCollection->add(
-                    new Attribute($namespaceName, $key, (string)$value),
-                    $namespaceName . ':' . $key
-                );
+                try {
+                    $projectAttributeCollection->add(
+                        new Attribute($namespaceName, $key, (string)$value),
+                        $namespaceName . ':' . $key
+                    );
+                } catch (ArgumentException $e) {
+                } catch (TypeCheckException $e) {
+                }
             }
         }
 
-        $genericEntity = self::parseGenericEntity($project);
+        $genericEntity = null;
+        try {
+            $genericEntity = self::parseGenericEntity($project);
+        } catch (ArgumentException $e) {
+        } catch (TypeCheckException $e) {
+        } catch (Exception $e) {
+        }
         //var_dump($genericEntityCollection);
         //die;
         return $genericEntity;
@@ -117,25 +127,26 @@ class GenericParser
     }
 
     /**
-     * @param SimpleXMLElement $genericEntity
+     * @param SimpleXMLElement $xmlElement
+     * @param GenericEntity $parentEntity
      * @return GenericEntity
      * @throws ArgumentException
      * @throws TypeCheckException
      * @throws Exception
      */
-    private static function parseGenericEntity(SimpleXMLElement $genericEntity)
+    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity)
     {
         //var_dump($genericEntity);
-        echo "vvv " . $genericEntity->getName() . PHP_EOL;
+        echo "vvv " . $xmlElement->getName() . PHP_EOL;
         // generic element attributes
         $genericEntityAttributeCollection = new AttributeCollection();
         ///** @var \SimpleXMLElement $genericEntity */
-        $entityNamespaces = $genericEntity->getNamespaces(true);
+        $entityNamespaces = $xmlElement->getNamespaces(true);
         foreach ($entityNamespaces as $namespaceName => $namespaceUri) {
-            $entityAttributes = $genericEntity->attributes($namespaceName, true);
+            $entityAttributes = $xmlElement->attributes($namespaceName, true);
             foreach ($entityAttributes as $key => $value) {
                 echo "    www " . $namespaceName . ":" . $key . " => " . $value . PHP_EOL;
-                if (!array_key_exists($namespaceName . ':' . $key, $genericEntityAttributeCollection->getIterator())) {
+                if (!array_key_exists($namespaceName . ':' . $key, $genericEntityAttributeCollection->getIterator()->getArrayCopy())) {
                     $genericEntityAttributeCollection->add(
                         new Attribute($namespaceName, $key, (string)$value),
                         $namespaceName . ':' . $key
@@ -144,25 +155,24 @@ class GenericParser
             }
         }
 
-
-        $result = new GenericEntity(
+        $newGenericEntity = new GenericEntity(
             $genericEntityAttributeCollection['entity:namespace']->Value,
             $genericEntityAttributeCollection['entity:name']->Value,
-            $genericEntity->getName(),
+            $xmlElement->getName(),
             $genericEntityAttributeCollection,
-            new GenericEntityCollection()
+            new GenericEntityCollection(),
+            $parentEntity
         );
 
-
         $genericEntityChildrenCollection = new GenericEntityCollection();
-        foreach ($genericEntity->children() as $entityName => $entityElement) {
+        foreach ($xmlElement->children() as $entityName => $entityElement) {
             echo $entityName . PHP_EOL;
             if (preg_match("/(.*?)List/", $entityName, $matches)) {
                 echo "NOW LOOK FOR LIST ITEMS: " . $matches[1] . PHP_EOL;
-                foreach ($entityElement->{$matches[1]} as $e) {
+                foreach ($entityElement->{$matches[1]} as $childXmlElement) {
                     echo "    xxx " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
-                    if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator())) {
-                        $childrenGenericEntity = self::parseGenericEntity($e);
+                    if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
+                        $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity);
                         echo "    yyy " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                         $genericEntityChildrenCollection->add(
                             $childrenGenericEntity,
@@ -177,9 +187,9 @@ class GenericParser
                 }
             }
         }
-        $result->ChildrenEntities = $genericEntityChildrenCollection;
+        $newGenericEntity->ChildrenEntities = $genericEntityChildrenCollection;
 
-        return $result;
+        return $newGenericEntity;
     }
 
 //    /**
