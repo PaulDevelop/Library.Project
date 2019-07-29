@@ -40,7 +40,7 @@ class GenericParser
 
         $genericEntity = null;
         try {
-            $genericEntity = self::parseGenericEntity($project, null);
+            $genericEntity = self::parseGenericEntity($project);
         } catch (ArgumentException $e) {
         } catch (TypeCheckException $e) {
         } catch (Exception $e) {
@@ -134,7 +134,7 @@ class GenericParser
      * @throws TypeCheckException
      * @throws Exception
      */
-    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity)
+    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null)
     {
         //var_dump($genericEntity);
         echo "vvv " . $xmlElement->getName() . PHP_EOL;
