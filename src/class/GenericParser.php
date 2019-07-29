@@ -186,6 +186,19 @@ class GenericParser
                     }
                 }
             }
+            else {
+                echo "    xxx2 " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
+                if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
+                    $childrenGenericEntity = self::parseGenericEntity($entityElement, $newGenericEntity);
+                    echo "    yyy2 " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
+                    $genericEntityChildrenCollection->add(
+                        $childrenGenericEntity,
+                        $childrenGenericEntity->Attributes['entity:namespace']->Value
+                        . '.'
+                        . $childrenGenericEntity->Attributes['entity:name']->Value
+                    );
+                }
+            }
         }
         $newGenericEntity->ChildrenEntities = $genericEntityChildrenCollection;
 
