@@ -42,7 +42,7 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     /**
      * @var AttributeCollection
      */
-    private AttributeCollection $attributes;
+    private $attributes;
 
 //    /**
 //     * @var string
@@ -57,12 +57,12 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     /**
      * @var GenericEntity
      */
-    private GenericEntity $parentGenericEntity;
+    private $parentGenericEntity;
 
     /**
      * @var GenericEntityCollection
      */
-    private GenericEntityCollection $childrenEntities;
+    private $childrenEntities;
     #endregion
 
     #region constructor
