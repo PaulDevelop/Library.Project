@@ -18,7 +18,8 @@
     },
     "require": {
         "pauldevelop/library-common": "*@dev",
-        "pauldevelop/library-modeling-entities": "dev-feature/generic-entity"
+        "pauldevelop/library-modeling-entities": "dev-feature/generic-entity",
+        "ext-simplexml": "*"
     },
     "autoload": {
         "psr-4": {

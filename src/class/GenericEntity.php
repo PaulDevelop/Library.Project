@@ -6,8 +6,6 @@ use Com\PaulDevelop\Library\Common\Base;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\GenericEntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\IGenericEntity;
-use Com\PaulDevelop\Library\Modeling\Entities\IProperty;
-use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
 
 /**
  * Class GenericEntity
@@ -15,11 +13,10 @@ use Com\PaulDevelop\Library\Modeling\Entities\PropertyCollection;
  *
  * @property string $Namespace
  * @property string $Name
+ * @property string $Type
  * @property AttributeCollection $Attributes
- * @property PropertyCollection $Properties
- * @property string $ReferencingPropertyName
- * @property GenericEntityCollection $ParentEntities
  * @property GenericEntityCollection $ChildrenEntities
+ * @property GenericEntityCollection $ParentEntities
  */
 class GenericEntity extends Base implements IGenericEntity, IProjectNode
 {
@@ -35,19 +32,14 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     private $name;
 
     /**
+     * @var string
+     */
+    private $type;
+
+    /**
      * @var AttributeCollection
      */
     private $attributes;
-
-    /**
-     * @var PropertyCollection
-     */
-    private $properties;
-
-    /**
-     * @var string
-     */
-    private $referencingPropertyName;
 
     /**
      * @var GenericEntityCollection
@@ -64,58 +56,31 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     /**
      * @param string $namespace
      * @param string $name
+     * @param string $type
      * @param AttributeCollection $attributes
-     * @param PropertyCollection $properties
-     * @param string $referencingPropertyName
-     * @param GenericEntityCollection $parentEntities
      * @param GenericEntityCollection $childrenEntities
+     * @param GenericEntityCollection $parentEntities
      * @throws \Exception
      */
     public function __construct(
         $namespace = '',
         $name = '',
+        $type = '',
         AttributeCollection $attributes = null,
-        PropertyCollection $properties = null,
-        $referencingPropertyName = '',
-        GenericEntityCollection $parentEntities = null,
-        GenericEntityCollection $childrenEntities = null
+        GenericEntityCollection $childrenEntities = null,
+        GenericEntityCollection $parentEntities = null
     )
     {
         $this->namespace = $namespace;
         $this->name = $name;
+        $this->type = $type;
         $this->attributes = $attributes != null ? $attributes : new AttributeCollection();
-        $this->properties = $properties != null ? $properties : new PropertyCollection();
-        $this->referencingPropertyName = $referencingPropertyName;
-        $this->parentEntities = $parentEntities != null ? $parentEntities : new GenericEntityCollection();
         $this->childrenEntities = $childrenEntities != null ? $childrenEntities : new GenericEntityCollection();
+        $this->parentEntities = $parentEntities != null ? $parentEntities : new GenericEntityCollection();
     }
     #endregion
 
     #region methods
-    /**
-     * HasProperty.
-     *
-     * @param string $propertyName
-     *
-     * @return boolean
-     */
-    public function hasProperty($propertyName)
-    {
-        // TODO: Implement hasProperty() method.
-    }
-
-    /**
-     * GetProperty.
-     *
-     * @param string $propertyName
-     *
-     * @return IProperty
-     */
-    public function getProperty($propertyName)
-    {
-        // TODO: Implement getProperty() method.
-    }
-
     /**
      * @return IProjectNode
      */
@@ -171,6 +136,24 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     }
 
     /**
+     * Type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setType($value = '')
+    {
+        $this->type = $value;
+    }
+
+    /**
      * GetAttributes
      *
      * @return AttributeCollection
@@ -180,33 +163,15 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
         return $this->attributes;
     }
 
-    /**
-     * Properties.
-     *
-     * @return PropertyCollection
-     */
-    public function getProperties()
-    {
-        return $this->properties;
-    }
-
-    /**
-     * Referencing property name
-     *
-     * @return string
-     */
-    public function getReferencingPropertyName()
-    {
-        return $this->referencingPropertyName;
-    }
-
-    /**
-     * @param string $value
-     */
-    public function setReferencingPropertyName($value = '')
-    {
-        $this->referencingPropertyName = $value;
-    }
+//    /**
+//     * Properties.
+//     *
+//     * @return PropertyCollection
+//     */
+//    public function getProperties()
+//    {
+//        return $this->properties;
+//    }
 
     /**
      * Parent entities.
@@ -244,5 +209,21 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
         // TODO: Implement getChildren() method.
         //$this->childrenEntities->getIterator()
         //return $this->childrenEntities[""];
+    }
+
+    /**
+     * @return GenericEntityCollection
+     */
+    public function getChildrenEntities()
+    {
+        return $this->childrenEntities;
+    }
+
+    /**
+     * @param GenericEntityCollection $value
+     */
+    public function setChildrenEntities(GenericEntityCollection $value)
+    {
+        $this->childrenEntities = $value;
     }
 }
