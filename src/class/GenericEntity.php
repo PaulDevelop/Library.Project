@@ -228,7 +228,7 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
      */
     public function getParentGenericEntity()
     {
-        return $this->getParentGenericEntity();
+        return $this->parentGenericEntity;
     }
     #endregion
 
