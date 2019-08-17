@@ -2,7 +2,9 @@
 
 namespace Com\PaulDevelop\Library\Project;
 
+use Com\PaulDevelop\Library\Common\ArgumentException;
 use Com\PaulDevelop\Library\Common\Base;
+use Com\PaulDevelop\Library\Common\TypeCheckException;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\GenericEntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\IGenericEntity;
@@ -246,6 +248,23 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     public function getChildrenList()
     {
         return $this->childrenEntities;
+    }
+
+    /**
+     * @param string $type
+     * @return GenericEntityCollection
+     * @throws ArgumentException
+     * @throws TypeCheckException
+     */
+    public function getChildrenListByType($type = '')
+    {
+        $result = new GenericEntityCollection();
+        foreach ( $this->childrenEntities as $key => $entity ) {
+            if ( $entity->Type == $type ) {
+                $result->add($entity, $key);
+            }
+        }
+        return $result;
     }
 
     /**
