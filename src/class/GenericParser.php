@@ -168,8 +168,9 @@ class GenericParser
         foreach ($xmlElement->children() as $entityName => $entityElement) {
             echo $entityName . PHP_EOL;
             if (preg_match("/(.*?)List/", $entityName, $matches)) {
-                echo "NOW LOOK FOR LIST ITEMS: " . $matches[1] . PHP_EOL;
-                foreach ($entityElement->{$matches[1]} as $childXmlElement) {
+                $entityType = $matches[1];
+                echo "NOW LOOK FOR LIST ITEMS: " . $entityType . PHP_EOL;
+                foreach ($entityElement->{$entityType} as $childXmlElement) {
                     echo "    xxx " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                     if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
                         $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity);
@@ -179,6 +180,7 @@ class GenericParser
                             $childrenGenericEntity->Attributes['entity:namespace']->Value
                             . '.'
                             . $childrenGenericEntity->Attributes['entity:name']->Value
+                            . '['.$entityType.']'
 //                            $genericEntityAttributeCollection['entity:namespace']->Value
 //                            . '.'
 //                            . $genericEntityAttributeCollection['entity:name']->Value
@@ -196,6 +198,7 @@ class GenericParser
                         $childrenGenericEntity->Attributes['entity:namespace']->Value
                         . '.'
                         . $childrenGenericEntity->Attributes['entity:name']->Value
+                        . '['.$entityName.']'
                     );
                 }
             }
