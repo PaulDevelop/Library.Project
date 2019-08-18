@@ -129,12 +129,13 @@ class GenericParser
     /**
      * @param SimpleXMLElement $xmlElement
      * @param GenericEntity $parentEntity
+     * @param bool $isListItem
      * @return GenericEntity
      * @throws ArgumentException
      * @throws TypeCheckException
      * @throws Exception
      */
-    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null)
+    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null, $isListItem = false)
     {
         //var_dump($genericEntity);
         echo "vvv " . $xmlElement->getName() . PHP_EOL;
@@ -161,7 +162,8 @@ class GenericParser
             $xmlElement->getName(),
             $genericEntityAttributeCollection,
             new GenericEntityCollection(),
-            $parentEntity
+            $parentEntity,
+            $isListItem
         );
 
         $genericEntityChildrenCollection = new GenericEntityCollection();
@@ -173,7 +175,7 @@ class GenericParser
                 foreach ($entityElement->{$entityType} as $childXmlElement) {
                     echo "    xxx " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                     if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
-                        $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity);
+                        $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true);
                         echo "    yyy " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                         $genericEntityChildrenCollection->add(
                             $childrenGenericEntity,
