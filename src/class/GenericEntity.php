@@ -20,6 +20,7 @@ use Exception;
  * @property AttributeCollection $Attributes
  * @property GenericEntityCollection $ChildrenEntities
  * @property GenericEntity $ParentGenericEntity
+ * @property boolean $IsListItem
  */
 //* @property string              $ReferencingPropertyName
 //* @property GenericEntityCollection $ParentEntities
@@ -65,6 +66,11 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
      * @var GenericEntityCollection
      */
     private $childrenEntities;
+
+    /**
+     * @var boolean
+     */
+    private $isListItem;
     #endregion
 
     #region constructor
@@ -75,6 +81,7 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
      * @param AttributeCollection $attributes
      * @param GenericEntityCollection $childrenEntities
      * @param GenericEntity $parentGenericEntity
+     * @param boolean $isListItem
      * @throws Exception
      */
 //* @param string              $referencingPropertyName
@@ -87,7 +94,8 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
         GenericEntityCollection $childrenEntities = null,
 //        $referencingPropertyName = '',
 //        GenericEntityCollection $parentEntities = null
-        GenericEntity $parentGenericEntity = null
+        GenericEntity $parentGenericEntity = null,
+        $isListItem = false
     )
     {
         $this->namespace = $namespace;
@@ -98,6 +106,7 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
 //        $this->referencingPropertyName = $referencingPropertyName;
 //        $this->parentEntities = $parentEntities != null ? $parentEntities : new GenericEntityCollection();
         $this->parentGenericEntity = $parentGenericEntity;
+        $this->isListItem = $isListItem;
     }
     #endregion
 
@@ -292,5 +301,21 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
     public function setChildrenEntities(GenericEntityCollection $value)
     {
         $this->childrenEntities = $value;
+    }
+
+    /**
+     * @return bool
+     */
+    public function GetIsListItem(): bool
+    {
+        return $this->isListItem;
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function SetIsListItem(bool $value): void
+    {
+        $this->isListItem = $value;
     }
 }
