@@ -150,7 +150,7 @@ class GenericParser
                 if (!array_key_exists($namespaceName . ':' . $key, $genericEntityAttributeCollection->getIterator()->getArrayCopy())) {
                     $genericEntityAttributeCollection->add(
                         new Attribute($namespaceName, $key, (string)$value),
-                        $namespaceName . ':' . $key
+                        $namespaceName.( $namespaceName == '' ? '' : ':' ).$key
                     );
                 }
             }
