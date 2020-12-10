@@ -161,16 +161,18 @@ class GenericParser
                 if (!array_key_exists($namespaceName . ':' . $key, $genericEntityAttributeCollection->getIterator()->getArrayCopy())) {
                     $genericEntityAttributeCollection->add(
                         new Attribute($namespaceName, $key, (string)$value),
-                        $namespaceName . ':' . $key
+                        $namespaceName.( $namespaceName == '' ? '' : ':' ).$key
                     );
                 }
             }
         }
 
+        $entityType = $genericEntityAttributeCollection['entity:type']->Value;
+
         $newGenericEntity = new GenericEntity(
             $genericEntityAttributeCollection['entity:namespace']->Value,
             $genericEntityAttributeCollection['entity:name']->Value,
-            $xmlElement->getName(),
+            $entityType != '' ? $entityType : $xmlElement->getName(),
             $genericEntityAttributeCollection,
             new GenericEntityCollection(),
             $parentEntity,
@@ -206,6 +208,24 @@ class GenericParser
 //                            . '.'
 //                            . $genericEntityAttributeCollection['entity:name']->Value
                         );
+                    }
+                }
+
+                // check entities with entity:type = $entityType
+                foreach ( $entityElement->children() as $childXmlElement ) {
+                    $type = (string) $childXmlElement->attributes('https://allcloud.io/support/documentation/generator/schema/entity/')->type;
+                    if ( $type == $entityType ) {
+                        if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
+                            $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true);
+                            echo "    yy2 " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
+                            $genericEntityChildrenCollection->add(
+                                $childrenGenericEntity,
+                                $childrenGenericEntity->Attributes['entity:namespace']->Value
+                                . '.'
+                                . $childrenGenericEntity->Attributes['entity:name']->Value
+                                . '['.$entityType.']'
+                            );
+                        }
                     }
                 }
             }
