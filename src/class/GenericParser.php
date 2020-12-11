@@ -31,7 +31,7 @@ class GenericParser
         foreach ($projectNamespaces as $namespaceName => $namespaceUri) {
             $projectAttributes = $project->attributes($namespaceName, true);
             foreach ($projectAttributes as $key => $value) {
-                if ($verboseLevel >= 2) {
+                if ($verboseLevel >= 3) {
                     echo $namespaceName . ' - ' . $key . ' - ' . $value . PHP_EOL;
                 }
                 try {
@@ -145,7 +145,7 @@ class GenericParser
     private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null, $isListItem = false, $verboseLevel = 0)
     {
         //var_dump($genericEntity);
-        if ($verboseLevel >= 2) {
+        if ($verboseLevel >= 3) {
             echo "vvv " . $xmlElement->getName() . PHP_EOL;
         }
         // generic element attributes
@@ -155,7 +155,7 @@ class GenericParser
         foreach ($entityNamespaces as $namespaceName => $namespaceUri) {
             $entityAttributes = $xmlElement->attributes($namespaceName, true);
             foreach ($entityAttributes as $key => $value) {
-                if ($verboseLevel >= 2) {
+                if ($verboseLevel >= 3) {
                     echo "    www " . $namespaceName . ":" . $key . " => " . $value . PHP_EOL;
                 }
                 if (!array_key_exists($namespaceName . ':' . $key, $genericEntityAttributeCollection->getIterator()->getArrayCopy())) {
@@ -181,21 +181,21 @@ class GenericParser
 
         $genericEntityChildrenCollection = new GenericEntityCollection();
         foreach ($xmlElement->children() as $entityName => $entityElement) {
-            if ($verboseLevel >= 2) {
+            if ($verboseLevel >= 3) {
                 echo $entityName . PHP_EOL;
             }
             if (preg_match("/(.*?)List/", $entityName, $matches)) {
                 $entityType = $matches[1];
-                if ($verboseLevel >= 2) {
+                if ($verboseLevel >= 3) {
                     echo "NOW LOOK FOR LIST ITEMS: " . $entityType . PHP_EOL;
                 }
                 foreach ($entityElement->{$entityType} as $childXmlElement) {
-                    if ($verboseLevel >= 2) {
+                    if ($verboseLevel >= 3) {
                         echo "    xxx " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                     }
                     if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
                         $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true, $verboseLevel);
-                        if ($verboseLevel >= 2) {
+                        if ($verboseLevel >= 3) {
                             echo "    yyy " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                         }
                         $genericEntityChildrenCollection->add(
@@ -230,12 +230,12 @@ class GenericParser
                 }
             }
             else {
-                if ($verboseLevel >= 2) {
+                if ($verboseLevel >= 3) {
                     echo "    xxx2 " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                 }
                 if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
                     $childrenGenericEntity = self::parseGenericEntity($entityElement, $newGenericEntity, false, $verboseLevel);
-                    if ($verboseLevel >= 2) {
+                    if ($verboseLevel >= 3) {
                         echo "    yyy2 " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                     }
                     $genericEntityChildrenCollection->add(
