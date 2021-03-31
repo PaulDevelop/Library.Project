@@ -197,7 +197,7 @@ class GenericParser
                         echo "    xxx " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                     }
                     if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
-                        $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true, $verboseLevel);
+                        $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true, $schemaNamespacePrefix, $verboseLevel);
                         if ($verboseLevel >= 3) {
                             echo "    yyy " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                         }
@@ -220,7 +220,7 @@ class GenericParser
                     $type = (string) $childXmlElement->attributes($schemaNamespacePrefix . 'entity/')->type;
                     if ( $type == $entityType ) {
                         if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
-                            $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true);
+                            $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true, $schemaNamespacePrefix, $verboseLevel);
                             echo "    yy2 " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                             $genericEntityChildrenCollection->add(
                                 $childrenGenericEntity,
@@ -238,7 +238,7 @@ class GenericParser
                     echo "    xxx2 " . $genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value . PHP_EOL;
                 }
                 if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
-                    $childrenGenericEntity = self::parseGenericEntity($entityElement, $newGenericEntity, false, $verboseLevel);
+                    $childrenGenericEntity = self::parseGenericEntity($entityElement, $newGenericEntity, false, $schemaNamespacePrefix, $verboseLevel);
                     if ($verboseLevel >= 3) {
                         echo "    yyy2 " . $childrenGenericEntity->Attributes['entity:namespace']->Value . '.' . $childrenGenericEntity->Attributes['entity:name']->Value . PHP_EOL;
                     }
