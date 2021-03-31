@@ -19,9 +19,10 @@ class GenericParser
     /**
      * @param string $projectFileName
      * @param int $verboseLevel
+     * @param string $schemaNamespacePrefix
      * @return GenericEntity|null
      */
-    public static function parse($projectFileName = '', $verboseLevel = 0)
+    public static function parse($projectFileName = '', $verboseLevel = 0, $schemaNamespacePrefix = '')
     {
         $projectAttributeCollection = new AttributeCollection();
         $project = simplexml_load_file($projectFileName);
@@ -47,7 +48,7 @@ class GenericParser
 
         $genericEntity = null;
         try {
-            $genericEntity = self::parseGenericEntity($project, null, false, $verboseLevel);
+            $genericEntity = self::parseGenericEntity($project, null, false, $schemaNamespacePrefix, $verboseLevel);
         } catch (ArgumentException $e) {
         } catch (TypeCheckException $e) {
         } catch (Exception $e) {
@@ -142,7 +143,7 @@ class GenericParser
      * @throws TypeCheckException
      * @throws Exception
      */
-    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null, $isListItem = false, $verboseLevel = 0)
+    private static function parseGenericEntity(SimpleXMLElement $xmlElement, GenericEntity $parentEntity = null, $isListItem = false, $schemaNamespacePrefix = '', $verboseLevel = 0)
     {
         //var_dump($genericEntity);
         if ($verboseLevel >= 3) {
@@ -213,7 +214,8 @@ class GenericParser
 
                 // check entities with entity:type = $entityType
                 foreach ( $entityElement->children() as $childXmlElement ) {
-                    $type = (string) $childXmlElement->attributes('https://allcloud.io/support/documentation/generator/schema/entity/')->type;
+//                    $type = (string) $childXmlElement->attributes('https://allcloud.io/support/documentation/generator/schema/entity/')->type;
+                    $type = (string) $childXmlElement->attributes($schemaNamespacePrefix . 'entity/')->type;
                     if ( $type == $entityType ) {
                         if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
                             $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true);
