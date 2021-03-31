@@ -19,17 +19,19 @@ class GenericParser
     /**
      * @param string $projectFileName
      * @param int $verboseLevel
-     * @param string $schemaNamespacePrefix
      * @return GenericEntity|null
      */
-    public static function parse($projectFileName = '', $verboseLevel = 0, $schemaNamespacePrefix = '')
+    public static function parse($projectFileName = '', $verboseLevel = 0)
     {
         $projectAttributeCollection = new AttributeCollection();
         $project = simplexml_load_file($projectFileName);
-
+        $schemaNamespacePrefix = '';
         // project attributes
         $projectNamespaces = $project->getNamespaces(true);
         foreach ($projectNamespaces as $namespaceName => $namespaceUri) {
+            if ( $namespaceName == '' ) {
+                $schemaNamespacePrefix = $namespaceUri;
+            }
             $projectAttributes = $project->attributes($namespaceName, true);
             foreach ($projectAttributes as $key => $value) {
                 if ($verboseLevel >= 3) {
