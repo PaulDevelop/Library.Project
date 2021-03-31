@@ -217,7 +217,7 @@ class GenericParser
                 // check entities with entity:type = $entityType
                 foreach ( $entityElement->children() as $childXmlElement ) {
 //                    $type = (string) $childXmlElement->attributes('https://allcloud.io/support/documentation/generator/schema/entity/')->type;
-                    $type = (string) $childXmlElement->attributes($schemaNamespacePrefix . 'entity/')->type;
+                    $type = (string) $childXmlElement->attributes($schemaNamespacePrefix . 'template/entity/')->type;
                     if ( $type == $entityType ) {
                         if (!array_key_exists($genericEntityAttributeCollection['entity:namespace']->Value . '.' . $genericEntityAttributeCollection['entity:name']->Value, $genericEntityChildrenCollection->getIterator()->getArrayCopy())) {
                             $childrenGenericEntity = self::parseGenericEntity($childXmlElement, $newGenericEntity, true, $schemaNamespacePrefix, $verboseLevel);
