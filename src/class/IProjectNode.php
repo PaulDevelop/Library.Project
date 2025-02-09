@@ -12,14 +12,16 @@ use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 interface IProjectNode
 {
     /**
+     * @param string $path
      * @return IProjectNode
      */
-    public function getNode();
+    public function getNode(string $path = ''): IProjectNode;
 
     /**
+     * @param string $path
      * @return ProjectNodeCollection
      */
-    public function getNodeCollection();
+    public function getNodeCollection(string $path = ''): ProjectNodeCollection;
 
     /**
      * GetAttributes

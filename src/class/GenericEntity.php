@@ -8,6 +8,8 @@ use Com\PaulDevelop\Library\Common\TypeCheckException;
 use Com\PaulDevelop\Library\Modeling\Entities\AttributeCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\GenericEntityCollection;
 use Com\PaulDevelop\Library\Modeling\Entities\IGenericEntity;
+//use Com\PaulDevelop\Library\Template\ChildDoesNotExistException;
+//use Com\PaulDevelop\Tool\Generator\MultipleNodesFoundException;
 use Exception;
 
 /**
@@ -112,19 +114,231 @@ class GenericEntity extends Base implements IGenericEntity, IProjectNode
 
     #region methods
     /**
+     * @param string $path
      * @return IProjectNode
      */
-    public function getNode()
+    public function getNode(string $path = ''): IProjectNode
     {
-        // TODO: Implement getNode() method.
+        // init
+        $result = $this;
+
+        // action
+        $chunks = $this->splitPath($path);
+        // each chunk is another depth level
+        // we need to go through the children nodes of the current node and check if the expression matches
+        // if yes, we can go into the next depth level until we reach the end of the query in $key (which is, the last chunk)
+        // if we reach the end of the query, we can return the node
+        //foreach ($chunks as $chunk) {
+        //    // find nodes
+        //    $result = $this->childrenEntities->get($chunk);
+        // }
+
+        // check current node
+        //if ( count($chunks) > 0 ) {
+        foreach ($chunks as $chunk) {
+
+            $regs = array();
+            preg_match('/^([a-z]+)(?:\[(.*)\])?$/i', $chunk, $regs);
+
+            // if there are attributes, store them in array
+            $chunkAttributes = array();
+            if (sizeof($regs) > 2) {
+                // get chunk name
+                $chunkEntityType = $regs[1];
+
+                // get attributes
+                $tmpAttributes = preg_split('/\,/', $regs[2]);
+                for ($i = 0; $i < sizeof($tmpAttributes); $i++) {
+                    list($key, $value) = preg_split('/\=/', $tmpAttributes[$i]); // split into key = value
+                    $key = substr($key, 1, strlen($key) - 1); // remove @
+                    $value = trim($value, '\''); // remove ''
+                    $chunkAttributes[$key] = $value; // add to attributes list
+                }
+            }
+
+            //  now check for children nodes
+            $count = 0;
+            //foreach ( $result->ChildrenEntities as $childrenEntity ) {
+            //    $cet = $childrenEntity->Type;
+            foreach ( $result->getChildrenListByType($chunkEntityType) as $childrenEntity ) {
+                $allAttributesAreOk = true;
+                foreach ( $chunkAttributes as $key => $value ) {
+                    $an = $key;
+                    if ( strpos($key, ':') > 0 ) {
+                        list($namespace, $name) = preg_split('/\:/', $key);
+                        $an = $namespace.':'.$name;
+                    }
+                    //list($namespace, $name) = preg_split('/\:/', $key);
+//                    if ( $childrenEntity->Attributes[$namespace.':'.$name] != null
+//                        && $childrenEntity->Attributes[$namespace.':'.$name]->Value != $value ) {
+//                        $allAttributesAreOk = false;
+//                        break;
+//                    }
+
+                    //$cea = $childrenEntity->Attributes[$an];
+                    //$ceav = $childrenEntity->Attributes[$an]->Value;
+
+                    if ($childrenEntity->Attributes[$an] == null
+                        || ($childrenEntity->Attributes[$an] != null
+                            && $childrenEntity->Attributes[$an]->Value != $value) ) {
+                        $allAttributesAreOk = false;
+                        break;
+                    }
+                }
+                if ( $allAttributesAreOk ) {
+                    $count++;
+                    if ($count > 1) {
+                        throw new Exception( // MultipleNodesFoundException(
+                            'Multiple nodes found for key: '.$key
+                        );
+                    }
+                    $result = $childrenEntity;
+                }
+            }
+            if ( $count == 0 ) {
+                throw new Exception( // ChildDoesNotExistException(
+                    'No node found for key: '.$key
+                );
+            }
+        }
+
+        // return
+        return $result;
     }
 
     /**
+     * @param string $path
      * @return ProjectNodeCollection
      */
-    public function getNodeCollection()
+    public function getNodeCollection(string $path = ''): ProjectNodeCollection
     {
-        // TODO: Implement getNodeCollection() method.
+        // init
+        $result = new ProjectNodeCollection();
+
+        // action
+        $currentNode = $this;
+        $chunks = $this->splitPath($path);
+
+        // check current node
+        //if ( count($chunks) > 0 ) {
+        $countChunks = 0;
+        foreach ($chunks as $chunk) {
+
+            $regs = array();
+            preg_match('/^([a-z]+)(?:\[(.*)\])?$/i', $chunk, $regs);
+
+            // if there are attributes, store them in array
+            $chunkAttributes = array();
+            // get chunk name
+            $chunkEntityType = $regs[1];
+            if (sizeof($regs) > 2) {
+
+                // get attributes
+                $tmpAttributes = preg_split('/\,/', $regs[2]);
+                for ($i = 0; $i < sizeof($tmpAttributes); $i++) {
+                    list($key, $value) = preg_split('/\=/', $tmpAttributes[$i]); // split into key = value
+                    $key = substr($key, 1, strlen($key) - 1); // remove @
+                    $value = trim($value, '\''); // remove ''
+                    $chunkAttributes[$key] = $value; // add to attributes list
+                }
+            }
+
+            //  now check for children nodes
+            $count = 0;
+            //foreach ( $result->ChildrenEntities as $childrenEntity ) {
+            //    $cet = $childrenEntity->Type;
+            foreach ( $currentNode->getChildrenListByType($chunkEntityType) as $childrenEntity ) {
+                $allAttributesAreOk = true;
+                foreach ( $chunkAttributes as $key => $value ) {
+                    $an = $key;
+                    if ( strpos($key, ':') > 0 ) {
+                        list($namespace, $name) = preg_split('/\:/', $key);
+                        $an = $namespace.':'.$name;
+                    }
+                    //list($namespace, $name) = preg_split('/\:/', $key);
+//                    if ( $childrenEntity->Attributes[$namespace.':'.$name] != null
+//                        && $childrenEntity->Attributes[$namespace.':'.$name]->Value != $value ) {
+//                        $allAttributesAreOk = false;
+//                        break;
+//                    }
+
+                    //$cea = $childrenEntity->Attributes[$an];
+                    //$ceav = $childrenEntity->Attributes[$an]->Value;
+
+                    if ($childrenEntity->Attributes[$an] == null
+                        || ($childrenEntity->Attributes[$an] != null
+                            && $childrenEntity->Attributes[$an]->Value != $value) ) {
+                        $allAttributesAreOk = false;
+                        break;
+                    }
+                }
+                if ( $allAttributesAreOk ) {
+
+
+                    $count++;
+                    if ( $countChunks == count($chunks) - 1 ) {
+                        $result->add($childrenEntity);
+                    }
+                    else {
+                        if ($count > 1) {
+                            throw new Exception( // MultipleNodesFoundException(
+                                'Multiple nodes found for key: '.$key
+                            );
+                        }
+                        $currentNode = $childrenEntity;
+                    }
+                }
+            }
+            if ( $count == 0 ) {
+                throw new Exception( // ChildDoesNotExistException(
+                    'No node found for key: '.$key
+                );
+            }
+            $countChunks++;
+        }
+
+        // return
+        return $result;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    private function splitPath(string $path = ''): array
+    {
+        // init
+        $textDelimiter = '\'';
+        $pathDelimiter = '.';
+        $result = array();
+
+        // action
+        $stringIsOpen = false;
+        $currentChunk = '';
+        for ($i = 0; $i < strlen($path); $i++) {
+            $currentSymbol = $path[$i];
+
+            if ($currentSymbol == $textDelimiter) {
+                $stringIsOpen = !$stringIsOpen;
+            }
+
+            if ($currentSymbol == $pathDelimiter && !$stringIsOpen) {
+                if ($currentChunk != '') {
+                    $result[count($result)] = $currentChunk;
+                }
+                $currentChunk = '';
+                continue;
+            }
+            $currentChunk .= $currentSymbol;
+        }
+
+        if ($currentChunk != '') {
+            $result[count($result)] = $currentChunk;
+        }
+
+        // return
+        return $result;
     }
     #endregion
 
